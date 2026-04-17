@@ -8,7 +8,6 @@ import User.Service.main.repository.BlacklistedTokenRepository;
 import User.Service.main.repository.UserRepository;
 import User.Service.main.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +16,19 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final BlacklistedTokenRepository blacklistedTokenRepository;
+
+    public AuthController(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder, BlacklistedTokenRepository blacklistedTokenRepository) {
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
+    }
 
     @PostMapping("/register")
     public ApiResponse<Object> register(@RequestBody User user) {
