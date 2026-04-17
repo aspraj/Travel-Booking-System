@@ -1,5 +1,6 @@
 package User.Service.main.config;
 
+import User.Service.main.repository.BlacklistedTokenRepository;
 import User.Service.main.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,27 +23,51 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI(); // ✅ only once
+
+        // ✅ Skip public endpoints
+        if (path.startsWith("/auth") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         String token = null;
         String username = null;
 
-        // 🔍 Extract token
+        // 🔍 Extract token safely
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtUtil.extractUsername(token);
+
+            // ⚠️ avoid null crash
+            if (token != null && !token.isEmpty()) {
+                username = jwtUtil.extractUsername(token);
+            }
+        }
+
+        // 🚫 BLOCK blacklisted token
+        if (token != null && blacklistedTokenRepository.existsByToken(token)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Token is blacklisted. Please login again.");
+            return;
         }
 
         // 🔐 Validate token
         if (username != null && jwtUtil.validateToken(token)) {
 
-            // ✅ NOW extract role (after token is valid)
             String role = jwtUtil.extractRole(token);
 
             List<SimpleGrantedAuthority> authorities =
