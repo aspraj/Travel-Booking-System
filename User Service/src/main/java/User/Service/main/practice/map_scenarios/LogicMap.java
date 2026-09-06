@@ -3,6 +3,8 @@ package User.Service.main.practice.map_scenarios;
 import User.Service.main.practice.Employee;
 import User.Service.main.practice.EmployeeData;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class LogicMap {
@@ -88,6 +90,58 @@ public class LogicMap {
 //            }
 //        }
 
-        
+//        Map<String, Integer> mapEmployee = new HashMap<>();
+//        for(Employee employee : listOfEmployee){
+//            mapEmployee.put(employee.getDepartment(), mapEmployee.getOrDefault(employee.getDepartment(), 0) +1);
+//        }
+//        System.out.println(mapEmployee);
+//        String highestNoOfEmployeeInDepartment = "";
+//        int no = 0;
+//        for(Map.Entry<String, Integer> highDepartment : mapEmployee.entrySet()){
+//            if(highDepartment.getValue() > no){
+//                highestNoOfEmployeeInDepartment = highDepartment.getKey();
+//                no = highDepartment.getValue();
+//            }
+//        }
+//        System.out.println(highestNoOfEmployeeInDepartment);
+
+//        List of salaries by department Map<Department, List<Salaries>>
+
+
+//        Map<String, List<Long>> listOfSalariesByDepartment =
+//                listOfEmployee.stream().collect(Collectors.groupingBy(Employee::getDepartment,
+//                        Collectors.mapping(Employee::getSalary, Collectors.toList())));
+//        System.out.println(listOfSalariesByDepartment);
+
+//        Map<String, TreeSet<Long>> listOfSalariesByDepartment = new HashMap<>();
+//        for(Employee employee : listOfEmployee){
+//            listOfSalariesByDepartment.computeIfAbsent(employee.getDepartment(), k -> new TreeSet<>()).add(employee
+//            .getSalary());
+//        }
+//        System.out.println(listOfSalariesByDepartment);
+
+
+//        Find the highest salary for each department
+//        Map<String, Employee> departmentByEmployee = new HashMap<>();
+//        for (Employee employee : listOfEmployee) {
+//            if (departmentByEmployee.containsKey(employee.getDepartment())) {
+//                if (employee.getSalary() > departmentByEmployee.get(employee.getDepartment()).getSalary())
+//                    departmentByEmployee.put(employee.getDepartment(), employee);
+//            } else {
+//                departmentByEmployee.put(employee.getDepartment(), employee);
+//            }
+//        }
+//        System.out.println(departmentByEmployee);
+
+
+        List<String> process = Arrays.asList("aman", "singh", "patel", "asp", "tg", "par", "roj", "raj");
+        var asp = process.stream().filter(str -> str != null && str.length() >= 3)
+                .sorted(Comparator.comparing(String::length).reversed()).toList();
+        System.out.println(asp);
+        List<String> tes =
+                process.stream().filter(e -> e != null && e.length() >= 3).sorted(Comparator.reverseOrder()).toList();
+        var res =
+                process.stream().filter(e -> e != null && e.length() >= 3).sorted(Comparator.comparing(String::length).reversed()).toList();
+        System.out.println(res);
     }
 }
